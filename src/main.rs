@@ -1,5 +1,9 @@
+#![allow(clippy::redundant_field_names)] //allowing double naming in the main file
 
 use bevy::{prelude::*, render::camera::ScalingMode};
+
+mod player;
+use player::PlayerPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1,0.1,0.1);
 pub const RESOLUTION: f32 = 16.0 / 9.0;
@@ -25,6 +29,7 @@ fn main(){
     .add_startup_system_to_stage(StartupStage::PreStartup, load_ascii)
 
     .add_plugins(DefaultPlugins)
+    .add_plugin(PlayerPlugin)
     .run();
 }
 
@@ -48,7 +53,7 @@ struct AsciiSheet(Handle<TextureAtlas>);
 fn load_ascii(
     mut commands: Commands,
     assets: Res<AssetServer>,
-    texture_atlases: Res<Assets<TextureAtlas>>
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>
 ) {
     let image = assets.load("Ascii.png");
     
@@ -60,8 +65,7 @@ fn load_ascii(
         Vec2::splat(2.0)
     );
 
-    let atlas_handle: Handle<TextureAtlas> 
-        = texture_atlases.add(atlas);
+    let atlas_handle: Handle<TextureAtlas> = texture_atlases.add(atlas);
 
     commands.insert_resource(AsciiSheet(atlas_handle));
 }
